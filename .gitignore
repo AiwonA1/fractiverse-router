@@ -1,0 +1,48 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+.nyc_output
+
+# next.js
+/.next/
+/out/
+/build
+
+# misc
+.DS_Store
+*.pem
+.idea/
+.vscode/
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env
+.env*.local
+.env.development
+.env.test
+.env.production
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Supabase
+/supabase/.temp
+/supabase/.env
+
+# OpenAI
+openai.key
+
+# Stripe
+stripe.key 
