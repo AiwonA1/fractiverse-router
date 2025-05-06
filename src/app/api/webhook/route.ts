@@ -19,29 +19,38 @@ const stripe = new Stripe(STRIPE_SECRET_KEY, {
 })
 
 export async function POST(request: Request) {
-  console.log('Webhook received:', new Date().toISOString())
-  
-  const body = await request.text()
-  const headersList = await headers()
-  const signature = headersList.get('stripe-signature')
-
-  if (!signature) {
-    console.error('Missing stripe-signature header')
-    return NextResponse.json(
-      { error: 'Missing stripe-signature header' },
-      { status: 400 }
-    )
-  }
-
   try {
-    const event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      STRIPE_WEBHOOK_SECRET
-    )
+    const body = await request.text()
+    const headersList = await headers()
+    const signature = headersList.get('stripe-signature')
 
-    console.log('Webhook event type:', event.type)
+    if (!signature) {
+      console.error('Missing stripe-signature header')
+      return NextResponse.json(
+        { error: 'Missing stripe-signature header' },
+        { status: 400 }
+      )
+    }
 
+    let event: Stripe.Event
+
+    try {
+      event = stripe.webhooks.constructEvent(
+        body,
+        signature,
+        STRIPE_WEBHOOK_SECRET as string
+      )
+    } catch (err) {
+      console.error('Webhook signature verification failed:', err)
+      return NextResponse.json(
+        { error: 'Webhook signature verification failed' },
+        { status: 400 }
+      )
+    }
+
+    console.log('Webhook verified successfully, event type:', event.type)
+
+    // Handle the event
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
@@ -111,12 +120,13 @@ export async function POST(request: Request) {
       }
     }
 
+    // Return a response to acknowledge receipt of the event
     return NextResponse.json({ received: true })
   } catch (error) {
     console.error('Webhook error:', error)
     return NextResponse.json(
       { error: 'Webhook handler failed' },
-      { status: 400 }
+      { status: 500 }
     )
   }
 } 
