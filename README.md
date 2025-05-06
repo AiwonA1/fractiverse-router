@@ -1,5 +1,7 @@
 # Fractiverse Router
 
+[![Vercel Deployment Status](https://therealsujitk-vercel-badge.vercel.app/?app=fractiverse-router-layer4-layer8)](https://fractiverse-router-layer4-layer8.vercel.app)
+
 ## Environment Setup
 
 This project uses environment variables for configuration. These are split between client-side (public) and server-side (private) variables.
